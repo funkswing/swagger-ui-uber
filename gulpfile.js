@@ -74,12 +74,12 @@ gulp.task('dist', ['clean','lint'], function() {
     .pipe(concat('swagger-ui.js'))
     .pipe(wrap('(function(){<%= contents %>}).call(this);'))
     .pipe(header(banner, { pkg: pkg } ))
-    .pipe(gulp.dest('./dist'))
+    .pipe(gulp.dest('./dist/static/api'))  // Copy 'swagger-ui.js' to 'dist/static'
     .pipe(uglify())
     .on('error', log)
     .pipe(rename({extname: '.min.js'}))
     .on('error', log)
-    .pipe(gulp.dest('./dist'))
+    .pipe(gulp.dest('./dist/static/api'))  // Copy 'swagger-ui.js' to 'dist/static'
     .pipe(connect.reload());
 });
 
@@ -110,18 +110,23 @@ gulp.task('copy', ['less'], function() {
   // copy JavaScript files inside lib folder
   gulp
     .src(['./lib/**/*.{js,map}'])
-    .pipe(gulp.dest('./dist/lib'))
+    .pipe(gulp.dest('./dist/static/api/lib'))
     .on('error', log);
 
   // copy `lang` for translations
   gulp
     .src(['./lang/**/*.js'])
-    .pipe(gulp.dest('./dist/lang'))
+    .pipe(gulp.dest('./dist/static/api/lang'))
     .on('error', log);
 
+  // copy all folders inside html folder (css, fonts, images)
+  gulp
+    .src(['./src/main/html/*/*'])
+    .pipe(gulp.dest('./dist/static/api'))
+    .on('error', log);
   // copy all files inside html folder
   gulp
-    .src(['./src/main/html/**/*'])
+    .src(['./src/main/html/*html'])
     .pipe(gulp.dest('./dist'))
     .on('error', log);
 });
